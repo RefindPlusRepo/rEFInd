@@ -1,0 +1,739 @@
+diff --git a/include/version.h b/include/version.h
+index 83480a8..e84759b 100644
+--- a/include/version.h
++++ b/include/version.h
+@@ -13,6 +13,6 @@
+ #ifndef __VERSION_H
+ #define __VERSION_H
+ 
+-#define REFIND_VERSION L"0.14.2"
++#define REFIND_VERSION L"0.14.2 Abz-Mouse-Fix-Mod"
+ 
+ #endif
+diff --git a/refind/menu.c b/refind/menu.c
+index f6b455f..2fe5213 100644
+--- a/refind/menu.c
++++ b/refind/menu.c
+@@ -54,7 +54,7 @@
+  * You should have received a copy of the GNU General Public License
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+-
++#include "pointer.h"
+ #include "global.h"
+ #include "screen.h"
+ #include "lib.h"
+@@ -383,10 +383,7 @@ static VOID SaveScreen(VOID) {
+ //
+ // generic menu function
+ //
+-UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen,
+-                     IN MENU_STYLE_FUNC StyleFunc,
+-                     IN OUT INTN *DefaultEntryIndex,
+-                     OUT REFIT_MENU_ENTRY **ChosenEntry) {
++UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry) {
+     SCROLL_STATE State;
+     EFI_STATUS Status;
+     EFI_INPUT_KEY key;
+diff --git a/refind/menu.h b/refind/menu.h
+index 011453a..ecb0373 100644
+--- a/refind/menu.h
++++ b/refind/menu.h
+@@ -1,46 +1,46 @@
++
+ /*
+- * refind/menu.h
+- * menu functions header file
+- *
+- * Copyright (c) 2006-2009 Christoph Pfisterer
+- * All rights reserved.
+- *
+- * Redistribution and use in source and binary forms, with or without
+- * modification, are permitted provided that the following conditions are
+- * met:
+- *
+- *  * Redistributions of source code must retain the above copyright
+- *    notice, this list of conditions and the following disclaimer.
+- *
+- *  * Redistributions in binary form must reproduce the above copyright
+- *    notice, this list of conditions and the following disclaimer in the
+- *    documentation and/or other materials provided with the
+- *    distribution.
+- *
+- *  * Neither the name of Christoph Pfisterer nor the names of the
+- *    contributors may be used to endorse or promote products derived
+- *    from this software without specific prior written permission.
+- *
+- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+- */
++* refind/menu.h
++* menu functions header file
++*
++* Copyright (c) 2006-2009 Christoph Pfisterer
++* All rights reserved.
++*
++* Redistribution and use in source and binary forms, with or without
++* modification, are permitted provided that the following conditions are
++* met:
++*
++*  * Redistributions of source code must retain the above copyright
++*    notice, this list of conditions and the following disclaimer.
++*
++*  * Redistributions in binary form must reproduce the above copyright
++*    notice, this list of conditions and the following disclaimer in the
++*    documentation and/or other materials provided with the
++*    distribution.
++*
++*  * Neither the name of Christoph Pfisterer nor the names of the
++*    contributors may be used to endorse or promote products derived
++*    from this software without specific prior written permission.
++*
++* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++* A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++* OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++* THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++*/
+ /*
+- * Modifications copyright (c) 2012 Roderick W. Smith
+- * 
+- * Modifications distributed under the terms of the GNU General Public
+- * License (GPL) version 3 (GPLv3), a copy of which must be distributed
+- * with this source code or binaries made from it.
+- * 
+- */
++* Modifications copyright (c) 2012 Roderick W. Smith
++*
++* Modifications distributed under the terms of the GNU General Public
++* License (GPL) version 3 (GPLv3), a copy of which must be distributed
++* with this source code or binaries made from it.
++*/
+ 
+ #ifndef __REFIND_MENU_H_
+ #define __REFIND_MENU_H_
+@@ -57,9 +57,7 @@
+ 
+ #include "pointer.h"
+ 
+-//
+ // menu module
+-//
+ 
+ #define MENU_EXIT_ENTER   (1)
+ #define MENU_EXIT_ESCAPE  (2)
+@@ -73,11 +71,11 @@
+ // scrolling definitions
+ 
+ typedef struct {
+-   INTN CurrentSelection, PreviousSelection, MaxIndex;
+-   INTN FirstVisible, LastVisible, MaxVisible;
+-   INTN FinalRow0, InitialRow1;
+-   INTN ScrollMode;
+-   BOOLEAN PaintAll, PaintSelection;
++INTN CurrentSelection, PreviousSelection, MaxIndex;
++INTN FirstVisible, LastVisible, MaxVisible;
++INTN FinalRow0, InitialRow1;
++INTN ScrollMode;
++BOOLEAN PaintAll, PaintSelection;
+ } SCROLL_STATE;
+ 
+ #define SCROLL_LINE_UP    (0)
+@@ -116,17 +114,17 @@ VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINT
+ UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry);
+ VOID DisplaySimpleMessage(CHAR16 *Title, CHAR16 *Message);
+ VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen,
+-                   IN SCROLL_STATE *State,
+-                   IN UINTN Function,
+-                   IN CHAR16 *ParamText);
++IN SCROLL_STATE *State,
++IN UINTN Function,
++IN CHAR16 *ParamText);
+ VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen,
+-                       IN SCROLL_STATE *State,
+-                       IN UINTN Function,
+-                       IN CHAR16 *ParamText);
++IN SCROLL_STATE *State,
++IN UINTN Function,
++IN CHAR16 *ParamText);
+ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen,
+-                     IN MENU_STYLE_FUNC StyleFunc,
+-                     IN OUT INTN *DefaultEntryIndex,
+-                     OUT REFIT_MENU_ENTRY **ChosenEntry);
++IN MENU_STYLE_FUNC StyleFunc,
++IN OUT INTN *DefaultEntryIndex,
++OUT REFIT_MENU_ENTRY **ChosenEntry);
+ VOID ManageHiddenTags(VOID);
+ CHAR16* ReadHiddenTags(CHAR16 *VarName);
+ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN CHAR16** DefaultSelection, OUT REFIT_MENU_ENTRY **ChosenEntry);
+diff --git a/refind/pointer.c b/refind/pointer.c
+index e9f7842..84714bc 100644
+--- a/refind/pointer.c
++++ b/refind/pointer.c
+@@ -1,22 +1,23 @@
++
+ /*
+- * refind/pointer.c
+- * Pointer device functions
+- *
+- * Copyright (c) 2018 CJ Vaughter
+- * All rights reserved.
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation, either version 3 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++* refind/pointer.c
++* Pointer device functions
++*
++* Copyright (c) 2018 CJ Vaughter
++* All rights reserved.
++*
++* This program is free software: you can redistribute it and/or modify
++* it under the terms of the GNU General Public License as published by
++* the Free Software Foundation, either version 3 of the License, or
++* (at your option) any later version.
++*
++* This program is distributed in the hope that it will be useful,
++* but WITHOUT ANY WARRANTY; without even the implied warranty of
++* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++* GNU General Public License for more details.
++*
++* You should have received a copy of the GNU General Public License
++* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
+ #include "pointer.h"
+@@ -44,135 +45,137 @@ EG_IMAGE* Background = NULL;
+ 
+ POINTER_STATE State;
+ 
++BOOLEAN gSuppressPointerDraw = FALSE;
++
+ ////////////////////////////////////////////////////////////////////////////////
+ // Initialize all pointer devices
+ ////////////////////////////////////////////////////////////////////////////////
+ VOID pdInitialize() {
+-    pdCleanup(); // just in case
+-
+-    if (!(GlobalConfig.EnableMouse || GlobalConfig.EnableTouch)) return;
+-
+-    // Get all handles that support absolute pointer protocol (usually touchscreens, but sometimes mice)
+-    UINTN NumPointerHandles = 0;
+-    EFI_STATUS handlestatus = refit_call5_wrapper(BS->LocateHandleBuffer, ByProtocol, &APointerGuid, NULL,
+-                                                  &NumPointerHandles, &APointerHandles);
+-
+-    if (!EFI_ERROR(handlestatus)) {
+-        APointerProtocol = AllocatePool(sizeof(EFI_ABSOLUTE_POINTER_PROTOCOL*) * NumPointerHandles);
+-        UINTN Index;
+-        for(Index = 0; Index < NumPointerHandles; Index++) {
+-            // Open the protocol on the handle
+-            EFI_STATUS status = refit_call6_wrapper(BS->OpenProtocol, APointerHandles[Index], &APointerGuid,
+-                                                    (VOID **) &APointerProtocol[NumAPointerDevices],
+-                                                    SelfImageHandle, NULL, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
+-            if (status == EFI_SUCCESS) {
+-                NumAPointerDevices++; 
+-            }
+-        }
+-    } else {
+-        GlobalConfig.EnableTouch = FALSE;
+-    }
+-
+-    // Get all handles that support simple pointer protocol (mice)
+-    NumPointerHandles = 0;
+-    handlestatus = refit_call5_wrapper(BS->LocateHandleBuffer, ByProtocol, &SPointerGuid, NULL,
+-                                       &NumPointerHandles, &SPointerHandles);
+-
+-    if(!EFI_ERROR(handlestatus)) {
+-        SPointerProtocol = AllocatePool(sizeof(EFI_SIMPLE_POINTER_PROTOCOL*) * NumPointerHandles);
+-        UINTN Index;
+-        for(Index = 0; Index < NumPointerHandles; Index++) {
+-            // Open the protocol on the handle
+-            EFI_STATUS status = refit_call6_wrapper(BS->OpenProtocol, SPointerHandles[Index], &SPointerGuid, (VOID **) &SPointerProtocol[NumSPointerDevices], SelfImageHandle, NULL, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
+-            if (status == EFI_SUCCESS) {
+-                NumSPointerDevices++; 
+-            }
+-        }
+-    } else {
+-        GlobalConfig.EnableMouse = FALSE;
+-    }
+-
+-    PointerAvailable = (NumAPointerDevices + NumSPointerDevices > 0);
+-
+-    // load mouse icon
+-    if (PointerAvailable && GlobalConfig.EnableMouse) {
+-        MouseImage = BuiltinIcon(BUILTIN_ICON_MOUSE);
+-    }
++pdCleanup(); // just in case
++
++if (!(GlobalConfig.EnableMouse || GlobalConfig.EnableTouch)) return;
++
++// Get all handles that support absolute pointer protocol (usually touchscreens, but sometimes mice)
++UINTN NumPointerHandles = 0;
++EFI_STATUS handlestatus = refit_call5_wrapper(BS->LocateHandleBuffer, ByProtocol, &APointerGuid, NULL,
++&NumPointerHandles, &APointerHandles);
++
++if (!EFI_ERROR(handlestatus)) {
++APointerProtocol = AllocatePool(sizeof(EFI_ABSOLUTE_POINTER_PROTOCOL*) * NumPointerHandles);
++UINTN Index;
++for(Index = 0; Index < NumPointerHandles; Index++) {
++// Open the protocol on the handle
++EFI_STATUS status = refit_call6_wrapper(BS->OpenProtocol, APointerHandles[Index], &APointerGuid,
++(VOID **) &APointerProtocol[NumAPointerDevices],
++SelfImageHandle, NULL, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
++if (status == EFI_SUCCESS) {
++NumAPointerDevices++;
++}
++}
++} else {
++GlobalConfig.EnableTouch = FALSE;
++}
++
++// Get all handles that support simple pointer protocol (mice)
++NumPointerHandles = 0;
++handlestatus = refit_call5_wrapper(BS->LocateHandleBuffer, ByProtocol, &SPointerGuid, NULL,
++&NumPointerHandles, &SPointerHandles);
++
++if(!EFI_ERROR(handlestatus)) {
++SPointerProtocol = AllocatePool(sizeof(EFI_SIMPLE_POINTER_PROTOCOL*) * NumPointerHandles);
++UINTN Index;
++for(Index = 0; Index < NumPointerHandles; Index++) {
++// Open the protocol on the handle
++EFI_STATUS status = refit_call6_wrapper(BS->OpenProtocol, SPointerHandles[Index], &SPointerGuid, (VOID **) &SPointerProtocol[NumSPointerDevices], SelfImageHandle, NULL, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
++if (status == EFI_SUCCESS) {
++NumSPointerDevices++;
++}
++}
++} else {
++GlobalConfig.EnableMouse = FALSE;
++}
++
++PointerAvailable = (NumAPointerDevices + NumSPointerDevices > 0);
++
++// load mouse icon
++if (PointerAvailable && GlobalConfig.EnableMouse) {
++MouseImage = BuiltinIcon(BUILTIN_ICON_MOUSE);
++}
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+ // Frees allocated memory and closes pointer protocols
+ ////////////////////////////////////////////////////////////////////////////////
+ VOID pdCleanup() {
+-    PointerAvailable = FALSE;
+-    pdClear();
+-
+-    if(APointerHandles) {
+-        UINTN Index;
+-        for(Index = 0; Index < NumAPointerDevices; Index++) {
+-            refit_call4_wrapper(BS->CloseProtocol, APointerHandles[Index], &APointerGuid, SelfImageHandle, NULL);
+-        }
+-        MyFreePool(APointerHandles);
+-        APointerHandles = NULL;
+-    }
+-    if(APointerProtocol) {
+-        MyFreePool(APointerProtocol);
+-        APointerProtocol = NULL;
+-    }
+-    if(SPointerHandles) {
+-        UINTN Index;
+-        for(Index = 0; Index < NumSPointerDevices; Index++) {
+-            refit_call4_wrapper(BS->CloseProtocol, SPointerHandles[Index], &SPointerGuid, SelfImageHandle, NULL);
+-        }
+-        MyFreePool(SPointerHandles);
+-        SPointerHandles = NULL;
+-    }
+-    if(SPointerProtocol) {
+-        MyFreePool(SPointerProtocol);
+-        SPointerProtocol = NULL;
+-    }
+-    if(MouseImage) {
+-        egFreeImage(MouseImage);
+-        Background = NULL;
+-    }
+-    NumAPointerDevices = 0;
+-    NumSPointerDevices = 0;
+-
+-    LastXPos = UGAWidth / 2;
+-    LastYPos = UGAHeight / 2;
+-
+-    State.X = UGAWidth / 2;
+-    State.Y = UGAHeight / 2;
+-    State.Press = FALSE;
+-    State.Holding = FALSE;
++PointerAvailable = FALSE;
++pdClear();
++
++if(APointerHandles) {
++UINTN Index;
++for(Index = 0; Index < NumAPointerDevices; Index++) {
++refit_call4_wrapper(BS->CloseProtocol, APointerHandles[Index], &APointerGuid, SelfImageHandle, NULL);
++}
++MyFreePool(APointerHandles);
++APointerHandles = NULL;
++}
++if(APointerProtocol) {
++MyFreePool(APointerProtocol);
++APointerProtocol = NULL;
++}
++if(SPointerHandles) {
++UINTN Index;
++for(Index = 0; Index < NumSPointerDevices; Index++) {
++refit_call4_wrapper(BS->CloseProtocol, SPointerHandles[Index], &SPointerGuid, SelfImageHandle, NULL);
++}
++MyFreePool(SPointerHandles);
++SPointerHandles = NULL;
++}
++if(SPointerProtocol) {
++MyFreePool(SPointerProtocol);
++SPointerProtocol = NULL;
++}
++if(MouseImage) {
++egFreeImage(MouseImage);
++Background = NULL;
++}
++NumAPointerDevices = 0;
++NumSPointerDevices = 0;
++
++LastXPos = UGAWidth / 2;
++LastYPos = UGAHeight / 2;
++
++State.X = UGAWidth / 2;
++State.Y = UGAHeight / 2;
++State.Press = FALSE;
++State.Holding = FALSE;
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+ // Returns whether or not any pointer devices are available
+ ////////////////////////////////////////////////////////////////////////////////
+ BOOLEAN pdAvailable() {
+-    return PointerAvailable;
++return PointerAvailable;
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+ // Returns the number of pointer devices available
+ ////////////////////////////////////////////////////////////////////////////////
+ UINTN pdCount() {
+-    return NumAPointerDevices + NumSPointerDevices;
++return NumAPointerDevices + NumSPointerDevices;
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+ // Returns a pointer device's WaitForInput event
+ ////////////////////////////////////////////////////////////////////////////////
+ EFI_EVENT pdWaitEvent(UINTN Index) {
+-    if(!PointerAvailable || Index >= NumAPointerDevices + NumSPointerDevices) {
+-        return NULL;
+-    }
++if(!PointerAvailable || Index >= NumAPointerDevices + NumSPointerDevices) {
++return NULL;
++}
+ 
+-    if(Index >= NumAPointerDevices) {
+-        return SPointerProtocol[Index - NumAPointerDevices]->WaitForInput;
+-    }
+-    return APointerProtocol[Index]->WaitForInput;
++if(Index >= NumAPointerDevices) {
++return SPointerProtocol[Index - NumAPointerDevices]->WaitForInput;
++}
++return APointerProtocol[Index]->WaitForInput;
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+@@ -181,74 +184,74 @@ EFI_EVENT pdWaitEvent(UINTN Index) {
+ ////////////////////////////////////////////////////////////////////////////////
+ EFI_STATUS pdUpdateState() {
+ #if defined(EFI32) && defined(__MAKEWITH_GNUEFI)
+-    return EFI_NOT_READY;
++return EFI_NOT_READY;
+ #else
+-    if(!PointerAvailable) {
+-        return EFI_NOT_READY;
+-    }
+-
+-    EFI_STATUS Status = EFI_NOT_READY;
+-    EFI_ABSOLUTE_POINTER_STATE APointerState;
+-    EFI_SIMPLE_POINTER_STATE SPointerState;
+-    BOOLEAN LastHolding = State.Holding;
+-
+-    UINTN Index;
+-    for(Index = 0; Index < NumAPointerDevices; Index++) {
+-        EFI_STATUS PointerStatus = refit_call2_wrapper(APointerProtocol[Index]->GetState, APointerProtocol[Index], &APointerState);
+-        // if new state found and we haven't already found a new state
+-        if(!EFI_ERROR(PointerStatus) && EFI_ERROR(Status)) {
+-            Status = EFI_SUCCESS;
++if(!PointerAvailable) {
++return EFI_NOT_READY;
++}
++
++EFI_STATUS Status = EFI_NOT_READY;
++EFI_ABSOLUTE_POINTER_STATE APointerState;
++EFI_SIMPLE_POINTER_STATE SPointerState;
++BOOLEAN LastHolding = State.Holding;
++
++UINTN Index;
++for(Index = 0; Index < NumAPointerDevices; Index++) {
++EFI_STATUS PointerStatus = refit_call2_wrapper(APointerProtocol[Index]->GetState, APointerProtocol[Index], &APointerState);
++// if new state found and we haven't already found a new state
++if(!EFI_ERROR(PointerStatus) && EFI_ERROR(Status)) {
++Status = EFI_SUCCESS;
+ 
+ #ifdef EFI32
+-            State.X = (UINTN)DivU64x64Remainder(APointerState.CurrentX * UGAWidth, APointerProtocol[Index]->Mode->AbsoluteMaxX, NULL);
+-            State.Y = (UINTN)DivU64x64Remainder(APointerState.CurrentY * UGAHeight, APointerProtocol[Index]->Mode->AbsoluteMaxY, NULL);
++State.X = (UINTN)DivU64x64Remainder(APointerState.CurrentX * UGAWidth, APointerProtocol[Index]->Mode->AbsoluteMaxX, NULL);
++State.Y = (UINTN)DivU64x64Remainder(APointerState.CurrentY * UGAHeight, APointerProtocol[Index]->Mode->AbsoluteMaxY, NULL);
+ #else
+-            State.X = (APointerState.CurrentX * UGAWidth) / APointerProtocol[Index]->Mode->AbsoluteMaxX;
+-            State.Y = (APointerState.CurrentY * UGAHeight) / APointerProtocol[Index]->Mode->AbsoluteMaxY;
++State.X = (APointerState.CurrentX * UGAWidth) / APointerProtocol[Index]->Mode->AbsoluteMaxX;
++State.Y = (APointerState.CurrentY * UGAHeight) / APointerProtocol[Index]->Mode->AbsoluteMaxY;
+ #endif
+-            State.Holding = (APointerState.ActiveButtons & EFI_ABSP_TouchActive);
+-        }
+-    }
+-    for(Index = 0; Index < NumSPointerDevices; Index++) {
+-        EFI_STATUS PointerStatus = refit_call2_wrapper(SPointerProtocol[Index]->GetState, SPointerProtocol[Index], &SPointerState);
+-        // if new state found and we haven't already found a new state
+-        if(!EFI_ERROR(PointerStatus) && EFI_ERROR(Status)) {
+-            Status = EFI_SUCCESS;
+-
+-            INT32 TargetX = 0;
+-            INT32 TargetY = 0;
++State.Holding = (APointerState.ActiveButtons & EFI_ABSP_TouchActive);
++}
++}
++for(Index = 0; Index < NumSPointerDevices; Index++) {
++EFI_STATUS PointerStatus = refit_call2_wrapper(SPointerProtocol[Index]->GetState, SPointerProtocol[Index], &SPointerState);
++// if new state found and we haven't already found a new state
++if(!EFI_ERROR(PointerStatus) && EFI_ERROR(Status)) {
++Status = EFI_SUCCESS;
++
++INT32 TargetX = 0;
++INT32 TargetY = 0;
+ 
+ #ifdef EFI32
+-	    TargetX = State.X + (INTN)DivS64x64Remainder(SPointerState.RelativeMovementX * GlobalConfig.MouseSpeed, SPointerProtocol[Index]->Mode->ResolutionX, NULL);
+-            TargetY = State.Y + (INTN)DivS64x64Remainder(SPointerState.RelativeMovementY * GlobalConfig.MouseSpeed, SPointerProtocol[Index]->Mode->ResolutionY, NULL);
++TargetX = State.X + (INTN)DivS64x64Remainder(SPointerState.RelativeMovementX * GlobalConfig.MouseSpeed, SPointerProtocol[Index]->Mode->ResolutionX, NULL);
++TargetY = State.Y + (INTN)DivS64x64Remainder(SPointerState.RelativeMovementY * GlobalConfig.MouseSpeed, SPointerProtocol[Index]->Mode->ResolutionY, NULL);
+ #else
+-            TargetX = State.X + SPointerState.RelativeMovementX * GlobalConfig.MouseSpeed / SPointerProtocol[Index]->Mode->ResolutionX;
+-            TargetY = State.Y + SPointerState.RelativeMovementY * GlobalConfig.MouseSpeed / SPointerProtocol[Index]->Mode->ResolutionY;
++TargetX = State.X + SPointerState.RelativeMovementX * GlobalConfig.MouseSpeed / SPointerProtocol[Index]->Mode->ResolutionX;
++TargetY = State.Y + SPointerState.RelativeMovementY * GlobalConfig.MouseSpeed / SPointerProtocol[Index]->Mode->ResolutionY;
+ #endif
+ 
+-            if(TargetX < 0) {
+-                State.X = 0;
+-            } else if(TargetX >= UGAWidth) {
+-                State.X = UGAWidth - 1;
+-            } else {
+-                State.X = TargetX;
+-            }
+-
+-            if(TargetY < 0) {
+-                State.Y = 0;
+-            } else if(TargetY >= UGAHeight) {
+-                State.Y = UGAHeight - 1;
+-            } else { 
+-                State.Y = TargetY;
+-            }
+-
+-            State.Holding = SPointerState.LeftButton;
+-        }
+-    }
+-
+-    State.Press = (LastHolding && !State.Holding);
+-
+-    return Status;
++if(TargetX < 0) {
++State.X = 0;
++} else if(TargetX >= UGAWidth) {
++State.X = UGAWidth - 1;
++} else {
++State.X = TargetX;
++}
++
++if(TargetY < 0) {
++State.Y = 0;
++} else if(TargetY >= UGAHeight) {
++State.Y = UGAHeight - 1;
++} else {
++State.Y = TargetY;
++}
++
++State.Holding = SPointerState.LeftButton;
++}
++}
++
++State.Press = (LastHolding && !State.Holding);
++
++return Status;
+ #endif
+ }
+ 
+@@ -256,44 +259,47 @@ EFI_STATUS pdUpdateState() {
+ // Returns the current pointer state
+ ////////////////////////////////////////////////////////////////////////////////
+ POINTER_STATE pdGetState() {
+-    return State;
++return State;
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+ // Draw the mouse at the current coordinates
+ ////////////////////////////////////////////////////////////////////////////////
+ VOID pdDraw() {
+-    if(Background) {
+-        egFreeImage(Background);
+-        Background = NULL;
+-    }
+-    if(MouseImage) {
+-        UINTN Width = MouseImage->Width;
+-        UINTN Height = MouseImage->Height;
+-
+-        if(State.X + Width > UGAWidth) {
+-            Width = UGAWidth - State.X;
+-        }
+-        if(State.Y + Height > UGAHeight) {
+-            Height = UGAHeight - State.Y;
+-        }
+-
+-        Background = egCopyScreenArea(State.X, State.Y, Width, Height);
+-        if(Background) {
+-            BltImageCompositeBadge(Background, MouseImage, NULL, State.X, State.Y);
+-        }
+-    }
+-    LastXPos = State.X;
+-    LastYPos = State.Y;
++if (gSuppressPointerDraw) return;
++if (State.X == LastXPos && State.Y == LastYPos) return; // optional optimization
++
++if(Background) {
++egFreeImage(Background);
++Background = NULL;
++}
++if(MouseImage) {
++UINTN Width = MouseImage->Width;
++UINTN Height = MouseImage->Height;
++
++if(State.X + Width > UGAWidth) {
++Width = UGAWidth - State.X;
++}
++if(State.Y + Height > UGAHeight) {
++Height = UGAHeight - State.Y;
++}
++
++Background = egCopyScreenArea(State.X, State.Y, Width, Height);
++if(Background) {
++BltImageCompositeBadge(Background, MouseImage, NULL, State.X, State.Y);
++}
++}
++LastXPos = State.X;
++LastYPos = State.Y;
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+ // Restores the background at the position the mouse was last drawn
+ ////////////////////////////////////////////////////////////////////////////////
+ VOID pdClear() {
+-    if (Background) {
+-        egDrawImage(Background, LastXPos, LastYPos);
+-        egFreeImage(Background);
+-        Background = NULL;
+-    }
++if (Background) {
++egDrawImage(Background, LastXPos, LastYPos);
++egFreeImage(Background);
++Background = NULL;
++}
+ }
+diff --git a/refind/pointer.h b/refind/pointer.h
+index 5e5312c..a9b9b06 100644
+--- a/refind/pointer.h
++++ b/refind/pointer.h
+@@ -1,22 +1,23 @@
++
+ /*
+- * refind/pointer.h
+- * pointer device functions header file
+- *
+- * Copyright (c) 2018 CJ Vaughter
+- * All rights reserved.
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation, either version 3 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++* refind/pointer.h
++* pointer device functions header file
++*
++* Copyright (c) 2018 CJ Vaughter
++* All rights reserved.
++*
++* This program is free software: you can redistribute it and/or modify
++* it under the terms of the GNU General Public License as published by
++* the Free Software Foundation, either version 3 of the License, or
++* (at your option) any later version.
++*
++* This program is distributed in the hope that it will be useful,
++* but WITHOUT ANY WARRANTY; without even the implied warranty of
++* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++* GNU General Public License for more details.
++*
++* You should have received a copy of the GNU General Public License
++* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
+ #ifndef __REFIND_POINTERDEVICE_H_
+@@ -34,11 +35,13 @@
+ #endif
+ 
+ typedef struct PointerStateStruct {
+-    UINTN X, Y;
+-    BOOLEAN Press;
+-    BOOLEAN Holding;
++UINTN X, Y;
++BOOLEAN Press;
++BOOLEAN Holding;
+ } POINTER_STATE;
+ 
++extern BOOLEAN gSuppressPointerDraw;
++
+ VOID pdInitialize();
+ VOID pdCleanup();
+ BOOLEAN pdAvailable();

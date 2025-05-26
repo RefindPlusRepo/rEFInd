@@ -54,7 +54,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#include "pointer.h"
 #include "global.h"
 #include "screen.h"
 #include "lib.h"
@@ -383,10 +383,7 @@ static VOID SaveScreen(VOID) {
 //
 // generic menu function
 //
-UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen,
-                     IN MENU_STYLE_FUNC StyleFunc,
-                     IN OUT INTN *DefaultEntryIndex,
-                     OUT REFIT_MENU_ENTRY **ChosenEntry) {
+UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry) {
     SCROLL_STATE State;
     EFI_STATUS Status;
     EFI_INPUT_KEY key;
